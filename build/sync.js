@@ -17,6 +17,7 @@ tree = require('./tree');
 module.exports = {
   signature: 'sync <uuid> [source]',
   description: 'sync your changes with a device',
+  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nExamples:\n\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --ignore foo,bar\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --watch --delay 4000',
   permission: 'user',
   options: [
     {
