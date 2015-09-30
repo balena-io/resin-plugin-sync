@@ -5,6 +5,7 @@ resin = require('resin-sdk')
 rsync = require('./rsync')
 shell = require('./shell')
 tree = require('./tree')
+ssh = require('./ssh')
 
 module.exports =
 	signature: 'sync <uuid> [source]'
@@ -29,6 +30,11 @@ module.exports =
 			parameter: 'command'
 			description: 'execute a command before syncing'
 			alias: 'b'
+		,
+			signature: 'exec'
+			parameter: 'command'
+			description: 'execute a command after syncing (on the device)'
+			alias: 'x'
 		,
 			signature: 'progress'
 			boolean: true
@@ -65,13 +71,19 @@ module.exports =
 				return shell.runCommand(options.before) if options.before?
 			.then ->
 				command = rsync.getCommand(_.merge(params, options))
-				console.info('Running command...')
 				console.log(chalk.cyan(command))
 				return shell.runCommand(command)
-			.tap ->
-				console.info('Synced, restarting device')
 			.then ->
-				return resin.models.device.restart(params.uuid)
+				if options.exec?
+					console.info('Synced, running command')
+					command = ssh.getConnectCommand
+						uuid: params.uuid
+						command: options.exec
+					console.log(chalk.cyan(command))
+					return shell.runCommand(command)
+				else
+					console.info('Synced, restarting device')
+					return resin.models.device.restart(params.uuid)
 
 		resin.models.device.isOnline(params.uuid).tap (isOnline) ->
 			throw new Error('Device is not online') if not isOnline
