@@ -26,6 +26,7 @@ _ = require('lodash')
 revalidator = require('revalidator')
 path = require('path')
 rsync = require('rsync')
+ssh = require('./ssh')
 
 ###*
 # @summary Get rsync command
@@ -77,6 +78,7 @@ exports.getCommand = (options) ->
 
 		destination: "root@#{options.uuid}.resin:/data/.resin-watch"
 		progress: options.progress
+		shell: ssh.getConnectCommand()
 
 		# a = archive mode.
 		# This makes sure rsync synchronizes the
@@ -85,9 +87,6 @@ exports.getCommand = (options) ->
 		# z = compress during transfer
 		# r = recursive
 		flags: 'azr'
-
-		# SSH to device trough VPN
-		shell: 'ssh -p 80 -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no'
 
 	if _.isEmpty(options.source.trim())
 		args.source = '.'

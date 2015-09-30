@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var path, revalidator, rsync, _;
+var path, revalidator, rsync, ssh, _;
 
 _ = require('lodash');
 
@@ -31,6 +31,8 @@ revalidator = require('revalidator');
 path = require('path');
 
 rsync = require('rsync');
+
+ssh = require('./ssh');
 
 
 /**
@@ -85,8 +87,8 @@ exports.getCommand = function(options) {
     source: path.join(options.source, path.sep),
     destination: "root@" + options.uuid + ".resin:/data/.resin-watch",
     progress: options.progress,
-    flags: 'azr',
-    shell: 'ssh -p 80 -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no'
+    shell: ssh.getConnectCommand(),
+    flags: 'azr'
   };
   if (_.isEmpty(options.source.trim())) {
     args.source = '.';
