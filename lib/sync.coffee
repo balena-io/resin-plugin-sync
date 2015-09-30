@@ -30,6 +30,11 @@ module.exports =
 			boolean: true
 			description: 'watch files'
 			alias: 'w'
+		,
+			signature: 'delay'
+			parameter: 'ms'
+			description: 'watch debouce delay'
+			alias: 'd'
 	]
 	action: (params, options, done) ->
 
@@ -64,7 +69,9 @@ module.exports =
 		.then(performSync)
 		.then ->
 			if options.watch
-				watch = tree.watch(params.source)
+				watch = tree.watch params.source,
+					ignore: options.ignore
+					delay: options.delay
 
 				watch.on 'watching', (watcher) ->
 					console.info("Watching path: #{watcher.path}")

@@ -32,6 +32,7 @@ exports.watch = (directory, options = {}) ->
 		path: directory
 		ignoreCommonPatterns: true
 		ignoreCustomPatterns: options.ignore
+		catchupDelay: options.delay
 		listeners:
 			change: ->
 				emitter.emit('change', arguments...)

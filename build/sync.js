@@ -39,6 +39,11 @@ module.exports = {
       boolean: true,
       description: 'watch files',
       alias: 'w'
+    }, {
+      signature: 'delay',
+      parameter: 'ms',
+      description: 'watch debouce delay',
+      alias: 'd'
     }
   ],
   action: function(params, options, done) {
@@ -75,7 +80,10 @@ module.exports = {
     }).then(performSync).then(function() {
       var watch;
       if (options.watch) {
-        watch = tree.watch(params.source);
+        watch = tree.watch(params.source, {
+          ignore: options.ignore,
+          delay: options.delay
+        });
         watch.on('watching', function(watcher) {
           return console.info("Watching path: " + watcher.path);
         });

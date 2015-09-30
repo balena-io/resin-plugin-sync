@@ -39,6 +39,7 @@ exports.watch = function(directory, options) {
     path: directory,
     ignoreCommonPatterns: true,
     ignoreCustomPatterns: options.ignore,
+    catchupDelay: options.delay,
     listeners: {
       change: function() {
         return emitter.emit.apply(emitter, ['change'].concat(__slice.call(arguments)));
