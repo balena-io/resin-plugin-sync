@@ -97,4 +97,10 @@ exports.getCommand = (options) ->
 	if options.ignore?
 		args.exclude = options.ignore
 
-	return rsync.build(args).command()
+	result = rsync.build(args).command()
+
+	# Workaround to the fact that node-rsync duplicates
+	# backslashes on Windows for some reason.
+	result = result.replace(/\\\\/g, '\\')
+
+	return result
