@@ -33,7 +33,7 @@ tree = require('./tree')
 ssh = require('./ssh')
 
 module.exports =
-	signature: 'sync <uuid> [source]'
+	signature: 'sync <uuid>'
 	description: 'sync your changes with a device'
 	help: '''
 		Use this command to sync your local changes to a certain device on the fly.
@@ -46,6 +46,11 @@ module.exports =
 	'''
 	permission: 'user'
 	options: [
+			signature: 'source'
+			parameter: 'path'
+			description: 'custom source path'
+			alias: 's'
+		,
 			signature: 'ignore'
 			parameter: 'paths'
 			description: 'comma delimited paths to ignore when syncing'
@@ -82,7 +87,7 @@ module.exports =
 		if options.ignore?
 			options.ignore = _.words(options.ignore)
 
-		_.defaults params,
+		_.defaults options,
 			source: process.cwd()
 
 		utils.validateObject options,
@@ -117,7 +122,7 @@ module.exports =
 
 		# Change directory to allow child processes inherit
 		# the correct working directory automatically
-		process.chdir(params.source)
+		process.chdir(options.source)
 
 		console.info("Connecting with: #{params.uuid}")
 
@@ -145,7 +150,7 @@ module.exports =
 		.then(performSync)
 		.then ->
 			if options.watch
-				watch = tree.watch params.source,
+				watch = tree.watch options.source,
 					ignore: options.ignore
 					delay: options.delay
 

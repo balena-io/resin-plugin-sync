@@ -43,12 +43,17 @@ tree = require('./tree');
 ssh = require('./ssh');
 
 module.exports = {
-  signature: 'sync <uuid> [source]',
+  signature: 'sync <uuid>',
   description: 'sync your changes with a device',
   help: 'Use this command to sync your local changes to a certain device on the fly.\n\nExamples:\n\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --ignore foo,bar\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --watch --delay 4000',
   permission: 'user',
   options: [
     {
+      signature: 'source',
+      parameter: 'path',
+      description: 'custom source path',
+      alias: 's'
+    }, {
       signature: 'ignore',
       parameter: 'paths',
       description: 'comma delimited paths to ignore when syncing',
@@ -85,7 +90,7 @@ module.exports = {
     if (options.ignore != null) {
       options.ignore = _.words(options.ignore);
     }
-    _.defaults(params, {
+    _.defaults(options, {
       source: process.cwd()
     });
     utils.validateObject(options, {
@@ -126,7 +131,7 @@ module.exports = {
         }
       }
     });
-    process.chdir(params.source);
+    process.chdir(options.source);
     console.info("Connecting with: " + params.uuid);
     performSync = function() {
       return Promise["try"](function() {
@@ -161,7 +166,7 @@ module.exports = {
     }).then(performSync).then(function() {
       var watch;
       if (options.watch) {
-        watch = tree.watch(params.source, {
+        watch = tree.watch(options.source, {
           ignore: options.ignore,
           delay: options.delay
         });
