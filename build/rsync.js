@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var path, revalidator, rsync, ssh, _;
+var path, revalidator, rsync, ssh, utils, _;
 
 _ = require('lodash');
 
@@ -31,6 +31,8 @@ revalidator = require('revalidator');
 path = require('path');
 
 rsync = require('rsync');
+
+utils = require('./utils');
 
 ssh = require('./ssh');
 
@@ -55,34 +57,41 @@ ssh = require('./ssh');
  */
 
 exports.getCommand = function(options) {
-  var args, error, result, validation;
-  validation = revalidator.validate(options, {
+  var args, result;
+  utils.validateObject(options, {
     properties: {
       source: {
         description: 'source',
         type: 'string',
-        required: true
+        required: true,
+        messages: {
+          type: 'Not a string: source',
+          required: 'Missing source'
+        }
       },
       uuid: {
         description: 'uuid',
         type: 'string',
         required: true,
-        allowEmpty: false
+        allowEmpty: false,
+        messages: {
+          type: 'Not a string: uuid',
+          required: 'Missing uuid',
+          allowEmpty: 'Empty string: uuid'
+        }
       },
       progress: {
         description: 'progress',
-        type: 'boolean'
+        type: 'boolean',
+        message: 'Not a boolean: progress'
       },
       ignore: {
         description: 'ignore',
-        type: ['string', 'array']
+        type: ['string', 'array'],
+        message: 'Not a string or array: ignore'
       }
     }
   });
-  if (!validation.valid) {
-    error = _.first(validation.errors);
-    throw new Error("" + error.property + " " + error.message);
-  }
   args = {
     source: path.join(options.source, path.sep),
     destination: "root@" + options.uuid + ".resin:/data/.resin-watch",

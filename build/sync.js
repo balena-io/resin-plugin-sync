@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var Promise, chalk, resin, rsync, shell, ssh, tree, _;
+var Promise, chalk, resin, rsync, shell, ssh, tree, utils, _;
 
 Promise = require('bluebird');
 
@@ -33,6 +33,8 @@ chalk = require('chalk');
 resin = require('resin-sdk');
 
 rsync = require('./rsync');
+
+utils = require('./utils');
 
 shell = require('./shell');
 
@@ -85,6 +87,44 @@ module.exports = {
     }
     _.defaults(params, {
       source: process.cwd()
+    });
+    utils.validateObject(options, {
+      properties: {
+        ignore: {
+          description: 'ignore',
+          type: 'array',
+          message: 'The ignore option should be an array'
+        },
+        before: {
+          description: 'before',
+          type: 'string',
+          message: 'The before option should be a string'
+        },
+        exec: {
+          description: 'exec',
+          type: 'string',
+          message: 'The exec option should be a string'
+        },
+        progress: {
+          description: 'progress',
+          type: 'boolean',
+          message: 'The progress option should be a boolean'
+        },
+        watch: {
+          description: 'watch',
+          type: 'boolean',
+          message: 'The watch option should be a boolean'
+        },
+        delay: {
+          description: 'delay',
+          type: 'number',
+          dependencies: 'watch',
+          messages: {
+            type: 'The delay option should be a number',
+            dependencies: 'The delay option should only be used with watch'
+          }
+        }
+      }
     });
     process.chdir(params.source);
     console.info("Connecting with: " + params.uuid);
