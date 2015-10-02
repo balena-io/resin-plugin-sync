@@ -55,7 +55,7 @@ ssh = require('./ssh');
  */
 
 exports.getCommand = function(options) {
-  var args, error, validation;
+  var args, error, result, validation;
   validation = revalidator.validate(options, {
     properties: {
       source: {
@@ -96,5 +96,7 @@ exports.getCommand = function(options) {
   if (options.ignore != null) {
     args.exclude = options.ignore;
   }
-  return rsync.build(args).command();
+  result = rsync.build(args).command();
+  result = result.replace(/\\\\/g, '\\');
+  return result;
 };
