@@ -8,6 +8,13 @@ resin-plugin-sync
 
 Watch a local project directory and sync it on the fly.
 
+Requirements
+------------
+
+This plugin depends on `rsync` to be available from the command line.
+
+If running Windows, see [cwRsync](https://www.itefix.net/content/cwrsync-free-edition).
+
 Installation
 ------------
 
