@@ -27,6 +27,7 @@ _ = require('lodash')
 chalk = require('chalk')
 resin = require('resin-sdk')
 rsync = require('./rsync')
+utils = require('./utils')
 shell = require('./shell')
 tree = require('./tree')
 ssh = require('./ssh')
@@ -83,6 +84,36 @@ module.exports =
 
 		_.defaults params,
 			source: process.cwd()
+
+		utils.validateObject options,
+			properties:
+				ignore:
+					description: 'ignore'
+					type: 'array'
+					message: 'The ignore option should be an array'
+				before:
+					description: 'before'
+					type: 'string'
+					message: 'The before option should be a string'
+				exec:
+					description: 'exec'
+					type: 'string'
+					message: 'The exec option should be a string'
+				progress:
+					description: 'progress'
+					type: 'boolean'
+					message: 'The progress option should be a boolean'
+				watch:
+					description: 'watch'
+					type: 'boolean'
+					message: 'The watch option should be a boolean'
+				delay:
+					description: 'delay'
+					type: 'number'
+					dependencies: 'watch'
+					messages:
+						type: 'The delay option should be a number'
+						dependencies: 'The delay option should only be used with watch'
 
 		# Change directory to allow child processes inherit
 		# the correct working directory automatically

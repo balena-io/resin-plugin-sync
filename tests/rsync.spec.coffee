@@ -32,34 +32,34 @@ describe 'Rsync:', ->
 		m.chai.expect ->
 			rsync.getCommand
 				uuid: '1234'
-		.to.throw('source is required')
+		.to.throw('Missing source')
 
 	it 'should throw if source is not a string', ->
 		m.chai.expect ->
 			rsync.getCommand
 				uuid: '1234'
 				source: [ 'foo', 'bar' ]
-		.to.throw('source must be of string type')
+		.to.throw('Not a string: source')
 
 	it 'should throw if no uuid', ->
 		m.chai.expect ->
 			rsync.getCommand
 				source: 'foo/bar'
-		.to.throw('uuid is required')
+		.to.throw('Missing uuid')
 
 	it 'should throw if uuid is not a string', ->
 		m.chai.expect ->
 			rsync.getCommand
 				uuid: 1234
 				source: 'foo/bar'
-		.to.throw('uuid must be of string type')
+		.to.throw('Not a string: uuid')
 
 	it 'should throw if uuid is empty', ->
 		m.chai.expect ->
 			rsync.getCommand
 				uuid: ''
 				source: 'foo/bar'
-		.to.throw('uuid must not be empty')
+		.to.throw('Empty string: uuid')
 
 	it 'should throw if progress is not a boolean', ->
 		m.chai.expect ->
@@ -67,7 +67,7 @@ describe 'Rsync:', ->
 				uuid: '1234'
 				source: 'foo/bar'
 				progress: 'true'
-		.to.throw('progress must be of boolean type')
+		.to.throw('Not a boolean: progress')
 
 	it 'should throw if ignore is not a string nor array', ->
 		m.chai.expect ->
@@ -75,7 +75,7 @@ describe 'Rsync:', ->
 				uuid: '1234'
 				source: 'foo/bar'
 				ignore: 1234
-		.to.throw('ignore must be of string,array type')
+		.to.throw('Not a string or array: ignore')
 
 	it 'should interpret an empty source as .', ->
 		command = rsync.getCommand

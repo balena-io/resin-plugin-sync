@@ -26,6 +26,7 @@ _ = require('lodash')
 revalidator = require('revalidator')
 path = require('path')
 rsync = require('rsync')
+utils = require('./utils')
 ssh = require('./ssh')
 
 ###*
@@ -48,27 +49,32 @@ ssh = require('./ssh')
 ###
 exports.getCommand = (options) ->
 
-	validation = revalidator.validate options,
+	utils.validateObject options,
 		properties:
 			source:
 				description: 'source'
 				type: 'string'
 				required: true
+				messages:
+					type: 'Not a string: source'
+					required: 'Missing source'
 			uuid:
 				description: 'uuid'
 				type: 'string'
 				required: true
 				allowEmpty: false
+				messages:
+					type: 'Not a string: uuid'
+					required: 'Missing uuid'
+					allowEmpty: 'Empty string: uuid'
 			progress:
 				description: 'progress'
 				type: 'boolean'
+				message: 'Not a boolean: progress'
 			ignore:
 				description: 'ignore'
 				type: [ 'string', 'array' ]
-
-	if not validation.valid
-		error = _.first(validation.errors)
-		throw new Error("#{error.property} #{error.message}")
+				message: 'Not a string or array: ignore'
 
 	args =
 
