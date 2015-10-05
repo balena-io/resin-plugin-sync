@@ -131,7 +131,6 @@ module.exports = {
         }
       }
     });
-    process.chdir(options.source);
     console.info("Connecting with: " + params.uuid);
     performSync = function() {
       return Promise["try"](function() {
