@@ -30,12 +30,28 @@ utils = require('./utils')
 shell = require('./shell')
 tree = require('./tree')
 ssh = require('./ssh')
+config = require('./config')
 
 module.exports =
 	signature: 'sync <uuid>'
 	description: 'sync your changes with a device'
 	help: '''
 		Use this command to sync your local changes to a certain device on the fly.
+
+		You can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:
+
+			$ cat $PWD/resin-sync.yml
+			source: src/
+			before: 'echo Hello'
+			exec: 'python main.py'
+			ignore:
+				- .git
+				- node_modules/
+			progress: true
+			watch: true
+			delay: 2000
+
+		Notice that explicitly passed command options override the ones set in the configuration file.
 
 		Examples:
 
@@ -85,6 +101,8 @@ module.exports =
 		# TODO: Add comma separated options to Capitano
 		if options.ignore?
 			options.ignore = _.words(options.ignore)
+
+		options = _.merge(config.load(), options)
 
 		_.defaults options,
 			source: process.cwd()

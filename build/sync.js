@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var Promise, resin, rsync, shell, ssh, tree, utils, _;
+var Promise, config, resin, rsync, shell, ssh, tree, utils, _;
 
 Promise = require('bluebird');
 
@@ -40,10 +40,12 @@ tree = require('./tree');
 
 ssh = require('./ssh');
 
+config = require('./config');
+
 module.exports = {
   signature: 'sync <uuid>',
   description: 'sync your changes with a device',
-  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nExamples:\n\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --ignore foo,bar\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --watch --delay 4000',
+  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nYou can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:\n\n	$ cat $PWD/resin-sync.yml\n	source: src/\n	before: \'echo Hello\'\n	exec: \'python main.py\'\n	ignore:\n		- .git\n		- node_modules/\n	progress: true\n	watch: true\n	delay: 2000\n\nNotice that explicitly passed command options override the ones set in the configuration file.\n\nExamples:\n\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --ignore foo,bar\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --watch --delay 4000',
   permission: 'user',
   options: [
     {
@@ -88,6 +90,7 @@ module.exports = {
     if (options.ignore != null) {
       options.ignore = _.words(options.ignore);
     }
+    options = _.merge(config.load(), options);
     _.defaults(options, {
       source: process.cwd()
     });
