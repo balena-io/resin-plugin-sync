@@ -32,10 +32,12 @@
     "gulp-mocha": "~2.0.0",
     "gulp-util": "~3.0.1",
     "mocha": "~2.0.1",
-    "mochainon": "^1.0.0"
+    "mochainon": "^1.0.0",
+    "mock-fs": "^3.3.0"
   },
   "dependencies": {
     "bluebird": "^2.10.1",
+    "js-yaml": "^3.4.2",
     "lodash": "^3.10.1",
     "resin-sdk": "^2.8.0",
     "revalidator": "^0.3.1",
