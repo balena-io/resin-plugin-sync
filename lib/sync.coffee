@@ -120,10 +120,6 @@ module.exports =
 						type: 'The delay option should be a number'
 						dependencies: 'The delay option should only be used with watch'
 
-		# Change directory to allow child processes inherit
-		# the correct working directory automatically
-		process.chdir(options.source)
-
 		console.info("Connecting with: #{params.uuid}")
 
 		performSync = ->
