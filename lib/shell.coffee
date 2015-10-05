@@ -24,7 +24,30 @@ THE SOFTWARE.
 
 child_process = require('child_process')
 os = require('os')
-Promise = require('bluebird')
+utils = require('./utils')
+
+###*
+# @summary Get sub shell command
+# @function
+# @protected
+#
+# @param {String} command - command
+# @returns {String} sub shell command
+#
+# @example
+# subShellCommand = shell.getSubShellCommand('foo')
+###
+exports.getSubShellCommand = (command) ->
+	if os.platform() is 'win32'
+		return {
+			program: 'cmd.exe'
+			args: [ '/s', '/c', "\"#{command}\"" ]
+		}
+	else
+		return {
+			program: '/bin/sh'
+			args: [ '-c', command ]
+		}
 
 ###*
 # @summary Run a command in a subshell
@@ -42,16 +65,10 @@ Promise = require('bluebird')
 # 	console.log('Done!')
 ###
 exports.runCommand = (command) ->
-	options =
+	subShellCommand = exports.getSubShellCommand(command)
+	spawn = child_process.spawn subShellCommand.program, subShellCommand.args,
 		stdio: 'inherit'
 
-	if os.platform() is 'win32'
-		spawn = child_process.spawn('cmd.exe', [ '/s', '/c', "\"#{command}\"" ], options)
-	else
-		spawn = child_process.spawn('/bin/sh', [ '-c', command ], options)
-
-	return new Promise (resolve, reject) ->
-		spawn.on('error', reject)
-		spawn.on 'close', (code) ->
-			return resolve() if code is 0
-			return reject(new Error("Child process exited with code #{code}"))
+	return utils.waitStream(spawn).then (code) ->
+		return if code is 0
+		throw new Error("Child process exited with code #{code}")

@@ -30,56 +30,31 @@ describe 'Rsync:', ->
 
 	it 'should throw if no source', ->
 		m.chai.expect ->
-			rsync.getCommand
-				uuid: '1234'
+			rsync.getCommand('1234')
 		.to.throw('Missing source')
 
 	it 'should throw if source is not a string', ->
 		m.chai.expect ->
-			rsync.getCommand
-				uuid: '1234'
+			rsync.getCommand '1234',
 				source: [ 'foo', 'bar' ]
 		.to.throw('Not a string: source')
 
-	it 'should throw if no uuid', ->
-		m.chai.expect ->
-			rsync.getCommand
-				source: 'foo/bar'
-		.to.throw('Missing uuid')
-
-	it 'should throw if uuid is not a string', ->
-		m.chai.expect ->
-			rsync.getCommand
-				uuid: 1234
-				source: 'foo/bar'
-		.to.throw('Not a string: uuid')
-
-	it 'should throw if uuid is empty', ->
-		m.chai.expect ->
-			rsync.getCommand
-				uuid: ''
-				source: 'foo/bar'
-		.to.throw('Empty string: uuid')
-
 	it 'should throw if progress is not a boolean', ->
 		m.chai.expect ->
-			rsync.getCommand
-				uuid: '1234'
+			rsync.getCommand '1234',
 				source: 'foo/bar'
 				progress: 'true'
 		.to.throw('Not a boolean: progress')
 
 	it 'should throw if ignore is not a string nor array', ->
 		m.chai.expect ->
-			rsync.getCommand
-				uuid: '1234'
+			rsync.getCommand '1234',
 				source: 'foo/bar'
 				ignore: 1234
 		.to.throw('Not a string or array: ignore')
 
 	it 'should interpret an empty source as .', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: ''
 
 		m.chai.expect(command).to.equal [
@@ -91,8 +66,7 @@ describe 'Rsync:', ->
 		].join(' ')
 
 	it 'should interpret an source containing only blank spaces as .', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: '      '
 
 		assertCommand command,
@@ -100,8 +74,7 @@ describe 'Rsync:', ->
 			uuid: '1234'
 
 	it 'should automatically append a slash at the end of source', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: 'foo'
 
 		assertCommand command,
@@ -109,8 +82,7 @@ describe 'Rsync:', ->
 			uuid: '1234'
 
 	it 'should not append a slash at the end of source is there is one already', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: "foo#{path.sep}"
 
 		assertCommand command,
@@ -118,8 +90,7 @@ describe 'Rsync:', ->
 			uuid: '1234'
 
 	it 'should be able to set progress to true', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: "foo#{path.sep}bar#{path.sep}"
 			progress: true
 
@@ -129,8 +100,7 @@ describe 'Rsync:', ->
 			progress: true
 
 	it 'should be able to set progress to false', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: "foo#{path.sep}bar#{path.sep}"
 			progress: false
 
@@ -139,8 +109,7 @@ describe 'Rsync:', ->
 			uuid: '1234'
 
 	it 'should be able to exclute a single pattern', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: "foo#{path.sep}bar#{path.sep}"
 			ignore: '.git'
 
@@ -150,8 +119,7 @@ describe 'Rsync:', ->
 			exclude: [ '.git' ]
 
 	it 'should be able to exclute a multiple patterns', ->
-		command = rsync.getCommand
-			uuid: '1234'
+		command = rsync.getCommand '1234',
 			source: "foo#{path.sep}bar#{path.sep}"
 			ignore: [ '.git', 'node_modules' ]
 

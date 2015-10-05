@@ -34,20 +34,20 @@ ssh = require('./ssh')
 # @function
 # @protected
 #
+# @param {String} uuid - uuid
 # @param {Object} options - rsync options
 # @param {String} options.source - source path
-# @param {String} options.uuid - device uuid
 # @param {Boolean} [options.progress] - show progress
 # @param {String|String[]} [options.ignore] - pattern/s to ignore
 #
 # @returns {String} rsync command
 #
 # @example
-# command = rsync.getCommand
+# command = rsync.getCommand '...',
 # 	source: 'foo/bar'
 # 	uuid: '1234567890'
 ###
-exports.getCommand = (options) ->
+exports.getCommand = (uuid, options = {}) ->
 
 	utils.validateObject options,
 		properties:
@@ -58,15 +58,6 @@ exports.getCommand = (options) ->
 				messages:
 					type: 'Not a string: source'
 					required: 'Missing source'
-			uuid:
-				description: 'uuid'
-				type: 'string'
-				required: true
-				allowEmpty: false
-				messages:
-					type: 'Not a string: uuid'
-					required: 'Missing uuid'
-					allowEmpty: 'Empty string: uuid'
 			progress:
 				description: 'progress'
 				type: 'boolean'
@@ -82,7 +73,7 @@ exports.getCommand = (options) ->
 		# an additional directory level at the destination.
 		source: path.join(options.source, path.sep)
 
-		destination: "root@#{options.uuid}.resin:/data/.resin-watch"
+		destination: "root@#{uuid}.resin:/data/.resin-watch"
 		progress: options.progress
 		shell: ssh.getConnectCommand()
 

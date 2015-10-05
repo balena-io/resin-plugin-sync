@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 Promise = require('bluebird')
 _ = require('lodash')
-chalk = require('chalk')
 resin = require('resin-sdk')
 rsync = require('./rsync')
 utils = require('./utils')
@@ -126,8 +125,7 @@ module.exports =
 			Promise.try ->
 				return shell.runCommand(options.before) if options.before?
 			.then ->
-				command = rsync.getCommand(_.merge(params, options))
-				console.log(chalk.cyan(command))
+				command = rsync.getCommand(params.uuid, options)
 				return shell.runCommand(command)
 			.then ->
 				if options.exec?
@@ -135,7 +133,6 @@ module.exports =
 					command = ssh.getConnectCommand
 						uuid: params.uuid
 						command: options.exec
-					console.log(chalk.cyan(command))
 					return shell.runCommand(command)
 				else
 					console.info('Synced, restarting device')
@@ -145,18 +142,17 @@ module.exports =
 			throw new Error('Device is not online') if not isOnline
 		.then(performSync)
 		.then ->
-			if options.watch
-				watch = tree.watch options.source,
-					ignore: options.ignore
-					delay: options.delay
+			return if not options.watch
 
-				watch.on 'watching', (watcher) ->
-					console.info("Watching path: #{watcher.path}")
+			watch = tree.watch(options.source, options)
 
-				# tree automatically throttles changes
-				watch.on 'change', (type, filePath) ->
-					console.info("- #{type.toUpperCase()}: #{filePath}")
-					performSync().catch(done)
+			watch.on 'watching', (watcher) ->
+				console.info("Watching path: #{watcher.path}")
 
-				watch.on('error', done)
+			# tree automatically throttles changes
+			watch.on 'change', (type, filePath) ->
+				console.info("- #{type.toUpperCase()}: #{filePath}")
+				performSync().catch(done)
+
+			watch.on('error', done)
 		.nodeify(done)

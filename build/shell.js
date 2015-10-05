@@ -22,13 +22,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var Promise, child_process, os;
+var child_process, os, utils;
 
 child_process = require('child_process');
 
 os = require('os');
 
-Promise = require('bluebird');
+utils = require('./utils');
+
+
+/**
+ * @summary Get sub shell command
+ * @function
+ * @protected
+ *
+ * @param {String} command - command
+ * @returns {String} sub shell command
+ *
+ * @example
+ * subShellCommand = shell.getSubShellCommand('foo')
+ */
+
+exports.getSubShellCommand = function(command) {
+  if (os.platform() === 'win32') {
+    return {
+      program: 'cmd.exe',
+      args: ['/s', '/c', "\"" + command + "\""]
+    };
+  } else {
+    return {
+      program: '/bin/sh',
+      args: ['-c', command]
+    };
+  }
+};
 
 
 /**
@@ -48,22 +75,15 @@ Promise = require('bluebird');
  */
 
 exports.runCommand = function(command) {
-  var options, spawn;
-  options = {
+  var spawn, subShellCommand;
+  subShellCommand = exports.getSubShellCommand(command);
+  spawn = child_process.spawn(subShellCommand.program, subShellCommand.args, {
     stdio: 'inherit'
-  };
-  if (os.platform() === 'win32') {
-    spawn = child_process.spawn('cmd.exe', ['/s', '/c', "\"" + command + "\""], options);
-  } else {
-    spawn = child_process.spawn('/bin/sh', ['-c', command], options);
-  }
-  return new Promise(function(resolve, reject) {
-    spawn.on('error', reject);
-    return spawn.on('close', function(code) {
-      if (code === 0) {
-        return resolve();
-      }
-      return reject(new Error("Child process exited with code " + code));
-    });
+  });
+  return utils.waitStream(spawn).then(function(code) {
+    if (code === 0) {
+      return;
+    }
+    throw new Error("Child process exited with code " + code);
   });
 };
