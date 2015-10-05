@@ -22,13 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var Promise, chalk, resin, rsync, shell, ssh, tree, utils, _;
+var Promise, resin, rsync, shell, ssh, tree, utils, _;
 
 Promise = require('bluebird');
 
 _ = require('lodash');
-
-chalk = require('chalk');
 
 resin = require('resin-sdk');
 
@@ -139,8 +137,7 @@ module.exports = {
         }
       }).then(function() {
         var command;
-        command = rsync.getCommand(_.merge(params, options));
-        console.log(chalk.cyan(command));
+        command = rsync.getCommand(params.uuid, options);
         return shell.runCommand(command);
       }).then(function() {
         var command;
@@ -150,7 +147,6 @@ module.exports = {
             uuid: params.uuid,
             command: options.exec
           });
-          console.log(chalk.cyan(command));
           return shell.runCommand(command);
         } else {
           console.info('Synced, restarting device');
@@ -164,20 +160,18 @@ module.exports = {
       }
     }).then(performSync).then(function() {
       var watch;
-      if (options.watch) {
-        watch = tree.watch(options.source, {
-          ignore: options.ignore,
-          delay: options.delay
-        });
-        watch.on('watching', function(watcher) {
-          return console.info("Watching path: " + watcher.path);
-        });
-        watch.on('change', function(type, filePath) {
-          console.info("- " + (type.toUpperCase()) + ": " + filePath);
-          return performSync()["catch"](done);
-        });
-        return watch.on('error', done);
+      if (!options.watch) {
+        return;
       }
+      watch = tree.watch(options.source, options);
+      watch.on('watching', function(watcher) {
+        return console.info("Watching path: " + watcher.path);
+      });
+      watch.on('change', function(type, filePath) {
+        console.info("- " + (type.toUpperCase()) + ": " + filePath);
+        return performSync()["catch"](done);
+      });
+      return watch.on('error', done);
     }).nodeify(done);
   }
 };
