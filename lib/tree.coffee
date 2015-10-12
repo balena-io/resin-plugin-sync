@@ -25,6 +25,36 @@ THE SOFTWARE.
 EventEmitter = require('events').EventEmitter
 watchr = require('watchr')
 
+###*
+# @summary Watch file system
+# @function
+# @protected
+#
+# @param {String} directory - directory path
+# @param {Object} [options] - options
+# @param {String[]} [options.ignore] - ignore paths
+# @param {Number} [options.delay] - watch delay
+#
+# @emits change
+# @emits log
+# @emits error
+# @emits watching
+# @emits next
+#
+# @returns {EventEmitter} watcher
+#
+# @example
+# watch = tree.watch('foo/bar', ignore: [ 'node_modules' ])
+#
+# watch.on 'watching', (watcher) ->
+# 	console.info("Watching path: #{watcher.path}")
+#
+# 	watch.on 'change', (type, filePath) ->
+# 		console.log(type, filePath)
+#
+# 	watch.on 'error', (error) ->
+# 		throw error
+###
 exports.watch = (directory, options = {}) ->
 	emitter = new EventEmitter()
 
