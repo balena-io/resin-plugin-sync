@@ -6,6 +6,8 @@ resin-plugin-sync
 [![Build Status](https://travis-ci.org/resin-io/resin-plugin-sync.svg?branch=master)](https://travis-ci.org/resin-io/resin-plugin-sync)
 [![Build status](https://ci.appveyor.com/api/projects/status/e0sth5805p3jdved?svg=true)](https://ci.appveyor.com/project/resin-io/resin-plugin-sync)
 
+Join our online chat at [![Gitter chat](https://badges.gitter.im/resin-io/chat.png)](https://gitter.im/resin-io/chat)
+
 Watch a local project directory and sync it on the fly.
 
 Requirements
