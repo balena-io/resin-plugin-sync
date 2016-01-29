@@ -17,17 +17,17 @@ describe 'Shell:', ->
 			afterEach ->
 				@osPlatformStub.restore()
 
-			it 'should set program to cmd.exe', ->
+			it 'should set program to sh', ->
 				subshell = shell.getSubShellCommand('foo')
-				m.chai.expect(subshell.program).to.equal('cmd.exe')
+				m.chai.expect(subshell.program).to.equal('sh')
 
-			it 'should set the correct cmd.exe arguments', ->
+			it 'should set the correct sh arguments', ->
 				subshell = shell.getSubShellCommand('foo')
-				m.chai.expect(subshell.args).to.deep.equal([ '/s', '/c', '"foo"' ])
+				m.chai.expect(subshell.args).to.deep.equal([ '-c', 'foo' ])
 
 			it 'should surround a multiple word command in double quotes', ->
 				subshell = shell.getSubShellCommand('foo bar baz')
-				m.chai.expect(subshell.args).to.deep.equal([ '/s', '/c', '"foo bar baz"' ])
+				m.chai.expect(subshell.args).to.deep.equal([ '-c', 'foo bar baz' ])
 
 		describe 'given not windows', ->
 
@@ -117,8 +117,8 @@ describe 'Shell:', ->
 				it 'should call spawn with the correct arguments', ->
 					shell.runCommand('echo foo')
 					args = @childProcessSpawnStub.firstCall.args
-					m.chai.expect(args[0]).to.equal('cmd.exe')
-					m.chai.expect(args[1]).to.deep.equal([ '/s', '/c', '"echo foo"' ])
+					m.chai.expect(args[0]).to.equal('sh')
+					m.chai.expect(args[1]).to.deep.equal([ '-c', 'echo foo' ])
 
 			describe 'given not windows', ->
 

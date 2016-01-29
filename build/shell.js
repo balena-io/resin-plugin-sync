@@ -46,8 +46,8 @@ utils = require('./utils');
 exports.getSubShellCommand = function(command) {
   if (os.platform() === 'win32') {
     return {
-      program: 'cmd.exe',
-      args: ['/s', '/c', "\"" + command + "\""]
+      program: 'sh',
+      args: ['-c', command]
     };
   } else {
     return {

@@ -13,9 +13,20 @@ Watch a local project directory and sync it on the fly.
 Requirements
 ------------
 
-This plugin depends on `rsync` to be available from the command line.
+This plugin depends on the following programs being available from the command line:
 
-If running Windows, see [cwRsync](https://www.itefix.net/content/cwrsync-free-edition).
+- `rsync`
+- `ssh`
+- `nc`
+
+Windows
+-------
+
+Currently, this plugin only supports [Cygwin](https://www.cygwin.com). Make sure the following packages are installed:
+
+- `openssh`
+- `rsync`
+- `nc`
 
 Installation
 ------------

@@ -38,10 +38,12 @@ utils = require('./utils')
 # subShellCommand = shell.getSubShellCommand('foo')
 ###
 exports.getSubShellCommand = (command) ->
+
+	# Assume Cygwin
 	if os.platform() is 'win32'
 		return {
-			program: 'cmd.exe'
-			args: [ '/s', '/c', "\"#{command}\"" ]
+			program: 'sh'
+			args: [ '-c', command ]
 		}
 	else
 		return {
