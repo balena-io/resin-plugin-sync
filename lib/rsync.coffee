@@ -23,6 +23,7 @@ THE SOFTWARE.
 ###
 
 _ = require('lodash')
+_.str = require('underscore.string')
 revalidator = require('revalidator')
 path = require('path')
 rsync = require('rsync')
@@ -67,12 +68,13 @@ exports.getCommand = (uuid, options = {}) ->
 				type: [ 'string', 'array' ]
 				message: 'Not a string or array: ignore'
 
+	# A trailing slash on the source avoids creating
+	# an additional directory level at the destination.
+	if not _.str.isBlank(options.source) and _.last(options.source) isnt '/'
+		options.source += '/'
+
 	args =
-
-		# A trailing slash on the source avoids creating
-		# an additional directory level at the destination.
-		source: path.join(options.source, path.sep)
-
+		source: options.source
 		destination: "root@#{uuid}.resin:/data/.resin-watch"
 		progress: options.progress
 		shell: ssh.getConnectCommand()

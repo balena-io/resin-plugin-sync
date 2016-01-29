@@ -26,6 +26,8 @@ var path, revalidator, rsync, ssh, utils, _;
 
 _ = require('lodash');
 
+_.str = require('underscore.string');
+
 revalidator = require('revalidator');
 
 path = require('path');
@@ -84,8 +86,11 @@ exports.getCommand = function(uuid, options) {
       }
     }
   });
+  if (!_.str.isBlank(options.source) && _.last(options.source) !== '/') {
+    options.source += '/';
+  }
   args = {
-    source: path.join(options.source, path.sep),
+    source: options.source,
     destination: "root@" + uuid + ".resin:/data/.resin-watch",
     progress: options.progress,
     shell: ssh.getConnectCommand(),
