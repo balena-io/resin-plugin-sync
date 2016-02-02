@@ -39,7 +39,7 @@
     "bluebird": "^2.10.1",
     "js-yaml": "^3.4.2",
     "lodash": "^3.10.1",
-    "resin-sdk": "^2.8.0",
+    "resin-sdk": "^5.1.0",
     "revalidator": "^0.3.1",
     "rsync": "^0.4.0",
     "underscore.string": "^3.2.3",
