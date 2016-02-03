@@ -88,7 +88,7 @@ module.exports = {
   action: function(params, options, done) {
     var performSync;
     if (options.ignore != null) {
-      options.ignore = _.words(options.ignore);
+      options.ignore = options.ignore.split(',');
     }
     options = _.merge(config.load(), options);
     _.defaults(options, {

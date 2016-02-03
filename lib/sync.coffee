@@ -100,7 +100,7 @@ module.exports =
 
 		# TODO: Add comma separated options to Capitano
 		if options.ignore?
-			options.ignore = _.words(options.ignore)
+			options.ignore = options.ignore.split(',')
 
 		options = _.merge(config.load(), options)
 
