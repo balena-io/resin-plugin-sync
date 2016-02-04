@@ -55,9 +55,9 @@ module.exports =
 
 		Examples:
 
-			$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9
-			$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --ignore foo,bar
-			$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --watch --delay 4000
+			$ resin sync 7cf02a6
+			$ resin sync 7cf02a6 --ignore foo,bar
+			$ resin sync 7cf02a6 --watch --delay 4000
 	'''
 	permission: 'user'
 	options: [
@@ -139,17 +139,17 @@ module.exports =
 
 		console.info("Connecting with: #{params.uuid}")
 
-		performSync = ->
+		performSync = (fullUUID) ->
 			Promise.try ->
 				return shell.runCommand(options.before) if options.before?
 			.then ->
-				command = rsync.getCommand(params.uuid, options)
+				command = rsync.getCommand(fullUUID, options)
 				return shell.runCommand(command)
 			.then ->
 				if options.exec?
 					console.info('Synced, running command')
 					command = ssh.getConnectCommand
-						uuid: params.uuid
+						uuid: fullUUID
 						command: options.exec
 					return shell.runCommand(command)
 				else
@@ -158,7 +158,8 @@ module.exports =
 
 		resin.models.device.isOnline(params.uuid).tap (isOnline) ->
 			throw new Error('Device is not online') if not isOnline
-		.then(performSync)
+		.then ->
+			return resin.models.device.get(params.uuid).get('uuid').then(performSync)
 		.then ->
 			return if not options.watch
 

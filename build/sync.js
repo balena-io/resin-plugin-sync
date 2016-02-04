@@ -45,7 +45,7 @@ config = require('./config');
 module.exports = {
   signature: 'sync <uuid>',
   description: 'sync your changes with a device',
-  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nYou can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:\n\n	$ cat $PWD/resin-sync.yml\n	source: src/\n	before: \'echo Hello\'\n	exec: \'python main.py\'\n	ignore:\n		- .git\n		- node_modules/\n	progress: true\n	watch: true\n	delay: 2000\n\nNotice that explicitly passed command options override the ones set in the configuration file.\n\nExamples:\n\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --ignore foo,bar\n	$ resin sync 7cf02a62a3a84440b1bb5579a3d57469148943278630b17e7fc6c4f7b465c9 --watch --delay 4000',
+  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nYou can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:\n\n	$ cat $PWD/resin-sync.yml\n	source: src/\n	before: \'echo Hello\'\n	exec: \'python main.py\'\n	ignore:\n		- .git\n		- node_modules/\n	progress: true\n	watch: true\n	delay: 2000\n\nNotice that explicitly passed command options override the ones set in the configuration file.\n\nExamples:\n\n	$ resin sync 7cf02a6\n	$ resin sync 7cf02a6 --ignore foo,bar\n	$ resin sync 7cf02a6 --watch --delay 4000',
   permission: 'user',
   options: [
     {
@@ -133,21 +133,21 @@ module.exports = {
       }
     });
     console.info("Connecting with: " + params.uuid);
-    performSync = function() {
+    performSync = function(fullUUID) {
       return Promise["try"](function() {
         if (options.before != null) {
           return shell.runCommand(options.before);
         }
       }).then(function() {
         var command;
-        command = rsync.getCommand(params.uuid, options);
+        command = rsync.getCommand(fullUUID, options);
         return shell.runCommand(command);
       }).then(function() {
         var command;
         if (options.exec != null) {
           console.info('Synced, running command');
           command = ssh.getConnectCommand({
-            uuid: params.uuid,
+            uuid: fullUUID,
             command: options.exec
           });
           return shell.runCommand(command);
@@ -161,7 +161,9 @@ module.exports = {
       if (!isOnline) {
         throw new Error('Device is not online');
       }
-    }).then(performSync).then(function() {
+    }).then(function() {
+      return resin.models.device.get(params.uuid).get('uuid').then(performSync);
+    }).then(function() {
       var watch;
       if (!options.watch) {
         return;
