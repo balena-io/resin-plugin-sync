@@ -1,6 +1,6 @@
 {
   "name": "resin-plugin-sync",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Watch a local project directory and sync it on the fly",
   "main": "build/sync.js",
   "homepage": "https://github.com/resin-io/resin-plugin-sync",
