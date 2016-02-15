@@ -93,7 +93,7 @@ exports.getCommand = function(uuid, options) {
     source: options.source,
     destination: "root@" + uuid + ".resin:/data/.resin-watch",
     progress: options.progress,
-    shell: ssh.getConnectCommand(),
+    shell: ssh.getConnectCommand(options),
     flags: 'azr'
   };
   if (_.isEmpty(options.source.trim())) {

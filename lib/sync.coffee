@@ -56,6 +56,7 @@ module.exports =
 		Examples:
 
 			$ resin sync 7cf02a6
+			$ resin sync 7cf02a6 --port 8080
 			$ resin sync 7cf02a6 --ignore foo,bar
 			$ resin sync 7cf02a6 --watch --delay 4000
 	'''
@@ -95,6 +96,11 @@ module.exports =
 			parameter: 'ms'
 			description: 'watch debouce delay'
 			alias: 'd'
+		,
+			signature: 'port'
+			parameter: 'port'
+			description: 'ssh port'
+			alias: 't'
 	]
 	action: (params, options, done) ->
 
@@ -151,6 +157,7 @@ module.exports =
 					command = ssh.getConnectCommand
 						uuid: fullUUID
 						command: options.exec
+						port: options.port
 					return shell.runCommand(command)
 				else
 					console.info('Synced, restarting device')

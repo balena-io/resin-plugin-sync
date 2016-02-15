@@ -22,6 +22,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
+var _;
+
+_ = require('lodash');
+
 
 /**
  * @summary Get SSH connection command for a device
@@ -31,6 +35,7 @@ THE SOFTWARE.
  * @param {Object} [options] - options
  * @param {String} [options.uuid] - device uuid
  * @param {String} [options.command] - command to execute
+ * @param {Number} [options.port] - ssh port
  *
  * @returns {String} ssh command
  *
@@ -39,12 +44,16 @@ THE SOFTWARE.
  * 	uuid: '1234'
  * 	command: 'date'
  */
+
 exports.getConnectCommand = function(options) {
   var result;
   if (options == null) {
     options = {};
   }
-  result = 'ssh -p 80 -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no';
+  _.defaults(options, {
+    port: 80
+  });
+  result = "ssh -p " + options.port + " -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no";
   if (options.uuid != null) {
     result += " root@" + options.uuid + ".resin";
   }

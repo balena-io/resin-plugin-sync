@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ###
 
+_ = require('lodash')
+
 ###*
 # @summary Get SSH connection command for a device
 # @function
@@ -30,6 +32,7 @@ THE SOFTWARE.
 # @param {Object} [options] - options
 # @param {String} [options.uuid] - device uuid
 # @param {String} [options.command] - command to execute
+# @param {Number} [options.port] - ssh port
 #
 # @returns {String} ssh command
 #
@@ -39,7 +42,11 @@ THE SOFTWARE.
 # 	command: 'date'
 ###
 exports.getConnectCommand = (options = {}) ->
-	result = 'ssh -p 80 -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no'
+
+	_.defaults options,
+		port: 80
+
+	result = "ssh -p #{options.port} -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no"
 
 	if options.uuid?
 		result += " root@#{options.uuid}.resin"

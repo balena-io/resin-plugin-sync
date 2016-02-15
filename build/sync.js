@@ -45,7 +45,7 @@ config = require('./config');
 module.exports = {
   signature: 'sync <uuid>',
   description: 'sync your changes with a device',
-  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nYou can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:\n\n	$ cat $PWD/resin-sync.yml\n	source: src/\n	before: \'echo Hello\'\n	exec: \'python main.py\'\n	ignore:\n		- .git\n		- node_modules/\n	progress: true\n	watch: true\n	delay: 2000\n\nNotice that explicitly passed command options override the ones set in the configuration file.\n\nExamples:\n\n	$ resin sync 7cf02a6\n	$ resin sync 7cf02a6 --ignore foo,bar\n	$ resin sync 7cf02a6 --watch --delay 4000',
+  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nYou can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:\n\n	$ cat $PWD/resin-sync.yml\n	source: src/\n	before: \'echo Hello\'\n	exec: \'python main.py\'\n	ignore:\n		- .git\n		- node_modules/\n	progress: true\n	watch: true\n	delay: 2000\n\nNotice that explicitly passed command options override the ones set in the configuration file.\n\nExamples:\n\n	$ resin sync 7cf02a6\n	$ resin sync 7cf02a6 --port 8080\n	$ resin sync 7cf02a6 --ignore foo,bar\n	$ resin sync 7cf02a6 --watch --delay 4000',
   permission: 'user',
   options: [
     {
@@ -83,6 +83,11 @@ module.exports = {
       parameter: 'ms',
       description: 'watch debouce delay',
       alias: 'd'
+    }, {
+      signature: 'port',
+      parameter: 'port',
+      description: 'ssh port',
+      alias: 't'
     }
   ],
   action: function(params, options, done) {
@@ -148,7 +153,8 @@ module.exports = {
           console.info('Synced, running command');
           command = ssh.getConnectCommand({
             uuid: fullUUID,
-            command: options.exec
+            command: options.exec,
+            port: options.port
           });
           return shell.runCommand(command);
         } else {

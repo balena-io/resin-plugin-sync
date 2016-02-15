@@ -31,3 +31,12 @@ describe 'SSH:', ->
 					command: 'ls -la'
 
 				m.chai.expect(command).to.equal('ssh -p 80 -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no root@1234.resin \"ls -la\"')
+
+		describe 'given a custom port', ->
+
+			it 'should use the port', ->
+				command = ssh.getConnectCommand
+					uuid: '1234'
+					port: 8080
+
+				m.chai.expect(command).to.equal('ssh -p 8080 -o \"ProxyCommand nc -X connect -x vpn.resin.io:3128 %h %p\" -o StrictHostKeyChecking=no root@1234.resin')
