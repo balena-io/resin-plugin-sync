@@ -77,7 +77,7 @@ exports.getCommand = (uuid, options = {}) ->
 		source: options.source
 		destination: "root@#{uuid}.resin:/data/.resin-watch"
 		progress: options.progress
-		shell: ssh.getConnectCommand()
+		shell: ssh.getConnectCommand(options)
 
 		# a = archive mode.
 		# This makes sure rsync synchronizes the
