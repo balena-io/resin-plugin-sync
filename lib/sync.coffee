@@ -166,14 +166,14 @@ module.exports =
 		resin.models.device.isOnline(params.uuid).tap (isOnline) ->
 			throw new Error('Device is not online') if not isOnline
 		.then ->
-			return resin.models.device.get(params.uuid).get('uuid')
-		.then (fullUUID) ->
-			return resin.models.device.enableDeviceUrl(fullUUID)
-		.then ->
 			return resin.models.device.hasDeviceUrl(params.uuid)
 		.then (hasDeviceUrl) ->
-			throw new Error('DeviceURL couldn\'t be enabled') if not hasDeviceUrl
-			return resin.models.device.get(params.uuid).get('uuid').delay(2000).then(performSync)
+			if hasDeviceUrl
+				return resin.models.device.get(params.uuid).get('uuid').then(performSync)
+			else
+				return resin.models.device.get(params.uuid).get('uuid').then (fullUUID) ->
+					return resin.models.device.enableDeviceUrl(fullUUID).then ->
+						return resin.models.device.get(params.uuid).get('uuid').delay(2000).then(performSync)
 		.then ->
 			return if not options.watch
 
