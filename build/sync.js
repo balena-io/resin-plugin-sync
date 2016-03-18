@@ -168,7 +168,17 @@ module.exports = {
         throw new Error('Device is not online');
       }
     }).then(function() {
-      return resin.models.device.get(params.uuid).get('uuid').then(performSync);
+      return resin.models.device.hasDeviceUrl(params.uuid);
+    }).then(function(hasDeviceUrl) {
+      if (hasDeviceUrl) {
+        return resin.models.device.get(params.uuid).get('uuid').then(performSync);
+      } else {
+        return resin.models.device.get(params.uuid).get('uuid').then(function(fullUUID) {
+          return resin.models.device.enableDeviceUrl(fullUUID).then(function() {
+            return resin.models.device.get(params.uuid).get('uuid').delay(2000).then(performSync);
+          });
+        });
+      }
     }).then(function() {
       var watch;
       if (!options.watch) {
