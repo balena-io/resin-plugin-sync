@@ -168,6 +168,11 @@ module.exports = {
         throw new Error('Device is not online');
       }
     }).then(function() {
+      return resin.models.device.hasDeviceUrl(params.uuid);
+    }).then(function(hasDeviceUrl) {
+      if (!hasDeviceUrl) {
+        throw new Error('Device URL not enabled');
+      }
       return resin.models.device.get(params.uuid).get('uuid').then(performSync);
     }).then(function() {
       var watch;
