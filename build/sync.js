@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var Promise, config, resin, rsync, shell, ssh, tree, utils, _;
+var Promise, config, resin, rsync, shell, ssh, utils, _;
 
 Promise = require('bluebird');
 
@@ -36,8 +36,6 @@ utils = require('./utils');
 
 shell = require('./shell');
 
-tree = require('./tree');
-
 ssh = require('./ssh');
 
 config = require('./config');
@@ -45,7 +43,7 @@ config = require('./config');
 module.exports = {
   signature: 'sync <uuid>',
   description: 'sync your changes with a device',
-  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nYou can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:\n\n	$ cat $PWD/resin-sync.yml\n	source: src/\n	before: \'echo Hello\'\n	exec: \'python main.py\'\n	ignore:\n		- .git\n		- node_modules/\n	progress: true\n	watch: true\n	delay: 2000\n\nNotice that explicitly passed command options override the ones set in the configuration file.\n\nExamples:\n\n	$ resin sync 7cf02a6\n	$ resin sync 7cf02a6 --port 8080\n	$ resin sync 7cf02a6 --ignore foo,bar\n	$ resin sync 7cf02a6 --watch --delay 4000',
+  help: 'Use this command to sync your local changes to a certain device on the fly.\n\nYou can save all the options mentioned below in a `resin-sync.yml` file, by using the same option names as keys. For example:\n\n	$ cat $PWD/resin-sync.yml\n	source: src/\n	before: \'echo Hello\'\n	exec: \'python main.py\'\n	ignore:\n		- .git\n		- node_modules/\n	progress: true\n\nNotice that explicitly passed command options override the ones set in the configuration file.\n\nExamples:\n\n	$ resin sync 7cf02a6\n	$ resin sync 7cf02a6 --port 8080\n	$ resin sync 7cf02a6 --ignore foo,bar',
   permission: 'user',
   options: [
     {
@@ -73,16 +71,6 @@ module.exports = {
       boolean: true,
       description: 'show progress',
       alias: 'p'
-    }, {
-      signature: 'watch',
-      boolean: true,
-      description: 'watch files',
-      alias: 'w'
-    }, {
-      signature: 'delay',
-      parameter: 'ms',
-      description: 'watch debouce delay',
-      alias: 'd'
     }, {
       signature: 'port',
       parameter: 'port',
@@ -120,20 +108,6 @@ module.exports = {
           description: 'progress',
           type: 'boolean',
           message: 'The progress option should be a boolean'
-        },
-        watch: {
-          description: 'watch',
-          type: 'boolean',
-          message: 'The watch option should be a boolean'
-        },
-        delay: {
-          description: 'delay',
-          type: 'number',
-          dependencies: 'watch',
-          messages: {
-            type: 'The delay option should be a number',
-            dependencies: 'The delay option should only be used with watch'
-          }
         }
       }
     });
@@ -169,20 +143,6 @@ module.exports = {
       }
     }).then(function() {
       return resin.models.device.get(params.uuid).get('uuid').then(performSync);
-    }).then(function() {
-      var watch;
-      if (!options.watch) {
-        return;
-      }
-      watch = tree.watch(options.source, options);
-      watch.on('watching', function(watcher) {
-        return console.info("Watching path: " + watcher.path);
-      });
-      watch.on('change', function(type, filePath) {
-        console.info("- " + (type.toUpperCase()) + ": " + filePath);
-        return performSync()["catch"](done);
-      });
-      return watch.on('error', done);
     }).nodeify(done);
   }
 };

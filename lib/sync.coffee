@@ -28,7 +28,6 @@ resin = require('resin-sdk')
 rsync = require('./rsync')
 utils = require('./utils')
 shell = require('./shell')
-tree = require('./tree')
 ssh = require('./ssh')
 config = require('./config')
 
@@ -48,8 +47,6 @@ module.exports =
 				- .git
 				- node_modules/
 			progress: true
-			watch: true
-			delay: 2000
 
 		Notice that explicitly passed command options override the ones set in the configuration file.
 
@@ -58,7 +55,6 @@ module.exports =
 			$ resin sync 7cf02a6
 			$ resin sync 7cf02a6 --port 8080
 			$ resin sync 7cf02a6 --ignore foo,bar
-			$ resin sync 7cf02a6 --watch --delay 4000
 	'''
 	permission: 'user'
 	options: [
@@ -86,16 +82,6 @@ module.exports =
 			boolean: true
 			description: 'show progress'
 			alias: 'p'
-		,
-			signature: 'watch'
-			boolean: true
-			description: 'watch files'
-			alias: 'w'
-		,
-			signature: 'delay'
-			parameter: 'ms'
-			description: 'watch debouce delay'
-			alias: 'd'
 		,
 			signature: 'port'
 			parameter: 'port'
@@ -131,17 +117,6 @@ module.exports =
 					description: 'progress'
 					type: 'boolean'
 					message: 'The progress option should be a boolean'
-				watch:
-					description: 'watch'
-					type: 'boolean'
-					message: 'The watch option should be a boolean'
-				delay:
-					description: 'delay'
-					type: 'number'
-					dependencies: 'watch'
-					messages:
-						type: 'The delay option should be a number'
-						dependencies: 'The delay option should only be used with watch'
 
 		console.info("Connecting with: #{params.uuid}")
 
@@ -167,18 +142,4 @@ module.exports =
 			throw new Error('Device is not online') if not isOnline
 		.then ->
 			return resin.models.device.get(params.uuid).get('uuid').then(performSync)
-		.then ->
-			return if not options.watch
-
-			watch = tree.watch(options.source, options)
-
-			watch.on 'watching', (watcher) ->
-				console.info("Watching path: #{watcher.path}")
-
-			# tree automatically throttles changes
-			watch.on 'change', (type, filePath) ->
-				console.info("- #{type.toUpperCase()}: #{filePath}")
-				performSync().catch(done)
-
-			watch.on('error', done)
 		.nodeify(done)
