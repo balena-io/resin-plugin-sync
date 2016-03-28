@@ -22,11 +22,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var Promise, revalidator, _;
+var revalidator, _;
 
 _ = require('lodash');
-
-Promise = require('bluebird');
 
 revalidator = require('revalidator');
 
@@ -59,25 +57,4 @@ exports.validateObject = function(object, rules) {
     error = _.first(validation.errors);
     throw new Error(error.message);
   }
-};
-
-
-/**
- * @summary Wait for a stream to be closed
- * @function
- * @protected
- *
- * @param {Stream} stream - stream
- * @fulfil {*}
- *
- * @example
- * utils.waitStream(stream).then ->
- * 	console.log('Stream was closed')
- */
-
-exports.waitStream = function(stream) {
-  return new Promise(function(resolve, reject) {
-    stream.on('error', reject);
-    return stream.on('close', resolve);
-  });
 };

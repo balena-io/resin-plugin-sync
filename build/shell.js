@@ -22,13 +22,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-var child_process, os, utils;
+var child_process, os, rindle;
 
 child_process = require('child_process');
 
 os = require('os');
 
-utils = require('./utils');
+rindle = require('rindle');
 
 
 /**
@@ -80,7 +80,7 @@ exports.runCommand = function(command) {
   spawn = child_process.spawn(subShellCommand.program, subShellCommand.args, {
     stdio: 'inherit'
   });
-  return utils.waitStream(spawn).then(function(code) {
+  return rindle.wait(spawn).then(function(code) {
     if (code === 0) {
       return;
     }
