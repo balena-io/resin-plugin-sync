@@ -23,7 +23,6 @@ THE SOFTWARE.
 ###
 
 _ = require('lodash')
-Promise = require('bluebird')
 revalidator = require('revalidator')
 
 ###*
@@ -52,20 +51,3 @@ exports.validateObject = (object, rules) ->
 	if not validation.valid
 		error = _.first(validation.errors)
 		throw new Error(error.message)
-
-###*
-# @summary Wait for a stream to be closed
-# @function
-# @protected
-#
-# @param {Stream} stream - stream
-# @fulfil {*}
-#
-# @example
-# utils.waitStream(stream).then ->
-# 	console.log('Stream was closed')
-###
-exports.waitStream = (stream) ->
-	return new Promise (resolve, reject) ->
-		stream.on('error', reject)
-		stream.on('close', resolve)

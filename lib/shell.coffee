@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 child_process = require('child_process')
 os = require('os')
-utils = require('./utils')
+rindle = require('rindle')
 
 ###*
 # @summary Get sub shell command
@@ -71,6 +71,6 @@ exports.runCommand = (command) ->
 	spawn = child_process.spawn subShellCommand.program, subShellCommand.args,
 		stdio: 'inherit'
 
-	return utils.waitStream(spawn).then (code) ->
+	return rindle.wait(spawn).spread (code) ->
 		return if code is 0
 		throw new Error("Child process exited with code #{code}")
