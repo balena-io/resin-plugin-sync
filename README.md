@@ -7,6 +7,8 @@ resin-plugin-sync
 
 Join our online chat at [![Gitter chat](https://badges.gitter.im/resin-io/chat.png)](https://gitter.im/resin-io/chat)
 
+**DEPRECATED: This plugin is now included in the [Resin CLI](https://github.com/resin-io/resin-cli) by default.**
+
 Watch a local project directory and sync it on the fly.
 
 Requirements
