@@ -4,7 +4,6 @@ resin-plugin-sync
 [![npm version](https://badge.fury.io/js/resin-plugin-sync.svg)](http://badge.fury.io/js/resin-plugin-sync)
 [![dependencies](https://david-dm.org/resin-io/resin-plugin-sync.png)](https://david-dm.org/resin-io/resin-plugin-sync.png)
 [![Build Status](https://travis-ci.org/resin-io/resin-plugin-sync.svg?branch=master)](https://travis-ci.org/resin-io/resin-plugin-sync)
-[![Build status](https://ci.appveyor.com/api/projects/status/e0sth5805p3jdved?svg=true)](https://ci.appveyor.com/project/resin-io/resin-plugin-sync)
 
 Join our online chat at [![Gitter chat](https://badges.gitter.im/resin-io/chat.png)](https://gitter.im/resin-io/chat)
 
